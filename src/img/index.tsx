@@ -1,0 +1,1 @@
+export const ANIMATED_OVERLAY_IMG = require('./overlay.gif');
