@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     },
     checkBoxContainer: {
         backgroundColor: 'transparent',
-        borderWidth: 0,
+        borderWidth: 0
     },
     buttonStyle: {
         backgroundColor: '#f4511e',

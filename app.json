@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ticToeGame",
-    "slug": "ticToeGame",
+    "name": "TicTacToe",
+    "slug": "ticTacToe",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -17,9 +17,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.fetko1977.tictactoe",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.fetko1977.tictactoe",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
