@@ -2,8 +2,9 @@ import React, { Fragment, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useGameDispatch, useGameState } from '../store/context';
 import { useNavigation  } from '@react-navigation/native';
-import { Button, CheckBox } from 'react-native-elements';
+import { Button, Icon } from 'react-native-elements';
 import Overlay from './shared/Overlay';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default function StartScreen() {
     const dispatch = useGameDispatch();
@@ -45,33 +46,17 @@ export default function StartScreen() {
         <Fragment>
             <View style={styles.container}>
                 <View style={styles.pickSymbolContainer}>
-                    <Text style={styles.pickSymbolText}>Select mark</Text>
+                    <Text style={styles.pickSymbolText}>Pick one</Text>
                     {
                         noSymbolCheckedError && <Text style={styles.errorText}>Please pick a mark!</Text>
                     }
                     <View style={styles.pickSymbolsWrapper}>
-                        <CheckBox
-                            center
-                            title='o'
-                            checked={checkedSymbol === 'o'}
-                            checkedIcon='check-square'
-                            uncheckedIcon='plus-square'
-                            checkedColor='#f4511e'
-                            onPress={() => handleCheckSymbol('o')}
-                            textStyle={styles.checkBoxTextStyle}
-                            containerStyle={styles.checkBoxContainer}
-                        />
-                        <CheckBox
-                            center
-                            title='x'
-                            checked={checkedSymbol === 'x'}
-                            checkedIcon='check-square'
-                            uncheckedIcon='plus-square'
-                            checkedColor='#f4511e'
-                            onPress={() => handleCheckSymbol('x')}
-                            textStyle={styles.checkBoxTextStyle}
-                            containerStyle={styles.checkBoxContainer}
-                        />
+                        <TouchableWithoutFeedback style={styles.symbolsButtonContainerStyle} onPress={() => handleCheckSymbol('o')}>
+                            <Icon name="circle" type="font-awesome-5" iconStyle={styles.symbolsButtonStyle} size={60} color="white" />
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback style={styles.symbolsButtonContainerStyle} onPress={() => handleCheckSymbol('x')}>
+                            <Icon name="times" type="font-awesome-5" iconStyle={styles.symbolsButtonStyle} size={60} color="white" />
+                        </TouchableWithoutFeedback>
                     </View>
                     {
                         checkedSymbol ? (
@@ -84,10 +69,10 @@ export default function StartScreen() {
                     }
                 </View>
                 <Button
-                    icon={{name: 'play-circle', type: 'font-awesome', size: 30, color: 'white'}}
+                    icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
                     raised
                     iconRight
-                    title='Start'
+                    title=''
                     onPress={handleGameStart}
                     buttonStyle={styles.buttonStyle}
                 />
@@ -111,14 +96,15 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100%'
+        height: '100%',
+        backgroundColor: '#cecece'
     },
     pickSymbolContainer: {
         paddingTop: 20,
         paddingBottom: 10
     },
     pickSymbolText: {
-        fontSize: 20,
+        fontSize: 40,
         textAlign: 'center',
         fontWeight: 'bold',
         color: '#f4511e'
@@ -126,21 +112,30 @@ const styles = StyleSheet.create({
     pickSymbolsWrapper: {
         display: 'flex',
         justifyContent: 'center',
-        flexDirection: 'row'
-    },
-    checkBoxTextStyle: {
-        fontSize: 30,
-        color: '#f4511e',
-        paddingBottom: 8,
-
-    },
-    checkBoxContainer: {
-        backgroundColor: 'transparent',
-        borderWidth: 0
+        flexDirection: 'row',
+        paddingBottom: 30,
+        paddingTop: 30,
     },
     buttonStyle: {
         backgroundColor: '#f4511e',
         fontSize: 40,
+        borderRadius: 100
+    },
+    symbolsButtonContainerStyle: {
+        backgroundColor: '#f4511e',
+        marginLeft: 10,
+        marginRight: 10,
+        padding: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        shadowColor: 'rgba(0,0,0,0.75)',
+        shadowOffset: { width: 2, height: 2 },
+        elevation: 2,
+    },
+    symbolsButtonStyle: {
+        backgroundColor: '#f4511e'
     },
     errorText: {
         color: 'red',
