@@ -29,7 +29,6 @@ export default function GameScreen () {
         <Fragment>
             <View style={styles.container}>
                 <GameBoard />
-                <GameMove />
                 <Button onPress={handleResetGame} title='Reset Game' buttonStyle={styles.resetGameButton} />
             </View>
         </Fragment>
@@ -45,8 +44,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#bebebe'
     },
     resetGameButton: {
-        backgroundColor: '#ca0000',
+        backgroundColor: '#333',
         color: 'white',
-        borderRadius: 0
+        borderRadius: 0,
+        paddingTop: 10,
+        paddingBottom: 10
     }
 });

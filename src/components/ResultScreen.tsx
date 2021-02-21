@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
-        backgroundColor: '#888'
+        backgroundColor: '#999'
     },
     actionContainer: {
         paddingTop: 50,
