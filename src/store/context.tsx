@@ -29,7 +29,6 @@ const GameStateContext = React.createContext<IState>(initialState);
 const GameDispatchContext = React.createContext<React.Dispatch<IAction>>(defaultAction)
 
 function gameReducer(state: IState, action: IAction) {
-    //console.log(action);
     switch (action.type) {
         case 'GAME_START':
             const {playerSymbol, gameSymbol} = action.payload;

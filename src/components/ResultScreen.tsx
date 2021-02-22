@@ -13,7 +13,6 @@ const ResultScreen = ():JSX.Element => {
     useEffect(() => navigation.addListener('beforeRemove', (e) => {
             const { type } = e.data.action;
             if(type === 'GO_BACK') {
-                console.log('Back');
                 e.preventDefault();
             } else {
                 dispatch({type: 'RESET_GAME'});
@@ -23,7 +22,6 @@ const ResultScreen = ():JSX.Element => {
     ), [navigation]);
 
     const exitApplication = ():void => {
-        console.log('Exit application');
         BackHandler.exitApp();
     }
 
