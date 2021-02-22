@@ -2,8 +2,9 @@ import React, { Fragment, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useGameDispatch, useGameState } from '../store/context';
 import { useNavigation  } from '@react-navigation/native';
-import { Button, CheckBox } from 'react-native-elements';
+import { Button, Icon, Divider  } from 'react-native-elements';
 import Overlay from './shared/Overlay';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export default function StartScreen() {
     const dispatch = useGameDispatch();
@@ -36,61 +37,54 @@ export default function StartScreen() {
     }
 
     const handleCheckSymbol = (symbol: string):void => {
+        if (checkedSymbol) {
+            return;
+        }
         setNoSymbolCheckedError(false);
         setCheckedSymbol(symbol);
         drawOrderHandler();
+    }
+
+    const renderStartButton = ():JSX.Element => {
+        return <Button
+                    icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
+                    raised
+                    iconRight
+                    title=''
+                    onPress={handleGameStart}
+                    containerStyle={styles.buttonContainerStyle}
+                    buttonStyle={styles.buttonStyle}
+                />
     }
 
     return (
         <Fragment>
             <View style={styles.container}>
                 <View style={styles.pickSymbolContainer}>
-                    <Text style={styles.pickSymbolText}>Select mark</Text>
-                    {
-                        noSymbolCheckedError && <Text style={styles.errorText}>Please pick a mark!</Text>
-                    }
+                    <Text style={styles.pickSymbolText}>Pick one</Text>
+                    <Divider style={styles.divider} />
                     <View style={styles.pickSymbolsWrapper}>
-                        <CheckBox
-                            center
-                            title='o'
-                            checked={checkedSymbol === 'o'}
-                            checkedIcon='check-square'
-                            uncheckedIcon='plus-square'
-                            checkedColor='#f4511e'
-                            onPress={() => handleCheckSymbol('o')}
-                            textStyle={styles.checkBoxTextStyle}
-                            containerStyle={styles.checkBoxContainer}
-                        />
-                        <CheckBox
-                            center
-                            title='x'
-                            checked={checkedSymbol === 'x'}
-                            checkedIcon='check-square'
-                            uncheckedIcon='plus-square'
-                            checkedColor='#f4511e'
-                            onPress={() => handleCheckSymbol('x')}
-                            textStyle={styles.checkBoxTextStyle}
-                            containerStyle={styles.checkBoxContainer}
-                        />
+                        <TouchableWithoutFeedback style={[styles.symbolsButtonContainerStyle, checkedSymbol === 'o' ? styles.selected : null ]} onPress={() => handleCheckSymbol('o')}>
+                            <Icon name="circle" type="font-awesome-5" iconStyle={checkedSymbol === 'o' ? styles.selectedSymbolsButtonStyle : styles.symbolsButtonStyle} size={60} color="white" />
+                        </TouchableWithoutFeedback>
+                        <TouchableWithoutFeedback style={[styles.symbolsButtonContainerStyle, checkedSymbol === 'x' ? styles.selected : null ]} onPress={() => handleCheckSymbol('x')}>
+                            <Icon name="times" type="font-awesome-5" iconStyle={checkedSymbol === 'x' ? styles.selectedSymbolsButtonStyle : styles.symbolsButtonStyle} size={60} color="white" />
+                        </TouchableWithoutFeedback>
                     </View>
                     {
                         checkedSymbol ? (
-                            gameMoveInProgress ? <View style={styles.orderMessageContainer}>
-                                <Text style={styles.orderMessageText}>You'll start second!</Text>
-                            </View> : <View style={styles.orderMessageContainer}>
-                            <Text style={styles.orderMessageText}>You'll start first!</Text>
-                            </View>
+                            gameMoveInProgress ? 
+                                <View style={styles.orderMessageContainer}>
+                                    <Text style={styles.orderMessageText}>You'll start second!</Text>
+                                    { renderStartButton() }
+                                </View> : 
+                                <View style={styles.orderMessageContainer}>
+                                    <Text style={styles.orderMessageText}>You'll start first!</Text>
+                                    { renderStartButton() }
+                                </View>   
                         ) : null
                     }
                 </View>
-                <Button
-                    icon={{name: 'play-circle', type: 'font-awesome', size: 30, color: 'white'}}
-                    raised
-                    iconRight
-                    title='Start'
-                    onPress={handleGameStart}
-                    buttonStyle={styles.buttonStyle}
-                />
                 {
                     orderDrawStarted ? (
                         <Overlay
@@ -111,54 +105,73 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '100%'
+        height: '100%',
+        backgroundColor: '#999'
+    },
+    divider: {
+        backgroundColor: '#333'
+    },
+    selected: {
+        backgroundColor: '#f4511e'
     },
     pickSymbolContainer: {
         paddingTop: 20,
         paddingBottom: 10
     },
     pickSymbolText: {
-        fontSize: 20,
+        fontSize: 40,
         textAlign: 'center',
         fontWeight: 'bold',
-        color: '#f4511e'
+        color: '#333',
+        paddingBottom: 10
     },
     pickSymbolsWrapper: {
         display: 'flex',
         justifyContent: 'center',
-        flexDirection: 'row'
-    },
-    checkBoxTextStyle: {
-        fontSize: 30,
-        color: '#f4511e',
-        paddingBottom: 8,
-
-    },
-    checkBoxContainer: {
-        backgroundColor: 'transparent',
-        borderWidth: 0
+        flexDirection: 'row',
+        paddingBottom: 30,
+        paddingTop: 30,
     },
     buttonStyle: {
         backgroundColor: '#f4511e',
         fontSize: 40,
+        borderRadius: 100,
     },
-    errorText: {
-        color: 'red',
-        fontSize: 14,
-        fontWeight: 'bold',
-        paddingTop: 5,
-        paddingBottom: 5,
-        textAlign: 'center'
+    buttonContainerStyle: {
+        width: 120,
+        marginTop: 20
+    },
+    symbolsButtonContainerStyle: {
+        backgroundColor: '#333',
+        marginLeft: 10,
+        marginRight: 10,
+        padding: 10,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        shadowColor: 'rgba(0,0,0,0.75)',
+        shadowOffset: { width: 2, height: 2 },
+        elevation: 2,
+    },
+    symbolsButtonStyle: {
+        backgroundColor: '#333'
+    },
+    selectedSymbolsButtonStyle: {
+        backgroundColor: '#f4511e'
     },
     orderMessageContainer: {
-        paddingBottom: 10
+        paddingBottom: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
     },
     orderMessageText: {
         textAlign: 'center',
         color: '#f4511e',
-        textShadowColor: 'rgba(0,0,0,0.5)',
+        textShadowColor: 'rgba(0,0,0, .75)',
         textShadowOffset: { width: 1, height: 1 },
-        elevation: 1,
+        textShadowRadius: 5,
         fontWeight: 'bold',
         fontSize: 20
     }

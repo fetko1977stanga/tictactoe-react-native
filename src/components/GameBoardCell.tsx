@@ -1,17 +1,28 @@
 import React from "react";
-import { StyleSheet, Text, TouchableHighlight } from "react-native";
+import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import { Icon } from 'react-native-elements';
 import { useGameState } from "../store/context";
 
 const GameBoardCell = (props:any):JSX.Element => {
     const { gameSymbol, playerSymbol } = useGameState();
-    const { gameCell, onPress } = props;
+    const { gameCell, onPress, flashing } = props;
     const { value } = gameCell;
 
-    const cellWithValueStyle = value === null ? null : value === gameSymbol ? styles.gameCell : styles.playerCell;
+    const flashingCell = flashing ? styles.gameCellFlashing : null;
+
+    const renderCellValue = (value: string):JSX.Element | null => {
+        const iconColour = value === gameSymbol ? '#333' : '#f4511e';
+        const iconName = value === 'x' ? 'times' : 'circle';
+        if (value === null) {
+            return value;
+        }
+
+        return <Icon name={iconName} type="font-awesome-5" size={30} color={iconColour} />
+    }
 
     return (
-        <TouchableHighlight onPress={onPress} style={[styles.cell, cellWithValueStyle]}>
-            <Text style={styles.textStyle}>{ value }</Text>
+        <TouchableHighlight onPress={onPress} style={[styles.cell, flashingCell]} underlayColor="#cecece">
+            <View>{ renderCellValue(value) }</View>
         </TouchableHighlight>
      );
 }
@@ -28,11 +39,8 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center'
     },
-    gameCell: {
-      backgroundColor: 'rgba(0, 0, 0, 0.55)',
-    },
-    playerCell: {
-      backgroundColor: '#f4511e',
+    gameCellFlashing: {
+      backgroundColor: '#cecece'
     },
     textStyle: {
         fontSize: 40,

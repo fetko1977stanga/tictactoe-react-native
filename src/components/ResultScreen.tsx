@@ -30,21 +30,23 @@ const ResultScreen = ():JSX.Element => {
     const renderActionButtons = ():JSX.Element => {
         return <View style={styles.actionContainer}>
             <Button
-                icon={{name: 'play-circle', type: 'font-awesome', size: 30, color: '#f4511e'}}
+                icon={{name: 'play-circle', type: 'font-awesome-5', size: 30, color: 'white'}}
                 raised
                 iconRight
-                title='Start New Game'
+                title='Restart'
                 onPress={() => navigation.navigate('Start')}
                 buttonStyle={styles.buttonStyle}
+                containerStyle={styles.buttonContainerStyle}
                 titleStyle={styles.buttonTitleStyle}
             />
             <Button
-                icon={{name: 'window-close', type: 'font-awesome', size: 30, color: '#f4511e'}}
+                icon={{name: 'times', type: 'font-awesome-5', size: 30, color: 'white'}}
                 raised
                 iconRight
-                title='Quit Game'
+                title='Quit'
                 onPress={() => exitApplication()}
-                buttonStyle={styles.buttonStyle}
+                buttonStyle={styles.buttonQuitStyle}
+                containerStyle={styles.buttonContainerStyle}
                 titleStyle={styles.buttonTitleStyle}
             />
         </View>
@@ -52,37 +54,37 @@ const ResultScreen = ():JSX.Element => {
 
     const renderResult = ():JSX.Element => {
         if (winner) {
-            return winner === playerSymbol ? <View style={styles.winResultContainer}>
+            return winner === playerSymbol ? <View style={styles.resultContainer}>
                 <Icon
                     name='trophy'
                     type='font-awesome-5'
-                    color='#fff'
+                    color='#ffd700'
                     size={100}
-                    containerStyle={styles.icon}
+                    containerStyle={styles.iconContainer}
                 />
-                <Text style={styles.resultText}>Win</Text>
+                <Text style={styles.resultWonText}>You've won!</Text>
                 {renderActionButtons()}
-            </View> : <View style={styles.loserResultContainer}>
+            </View> : <View style={styles.resultContainer}>
                 <Icon
                     name='heart-broken'
                     type='font-awesome-5'
-                    color='#fff'
+                    color='#333'
                     size={100}
-                    containerStyle={styles.icon}
+                    containerStyle={styles.iconContainer}
                 />
-                <Text style={styles.resultText}>Lose</Text>
+                <Text style={styles.resultText}>You've lost!</Text>
                 {renderActionButtons()}
             </View>
         } else {
-            return <View style={styles.drawResultContainer}>
+            return <View style={styles.resultContainer}>
                 <Icon
                     name='equals'
                     type='font-awesome-5'
-                    color='#fff'
+                    color='#f4511e'
                     size={100}
-                    containerStyle={styles.icon}
+                    containerStyle={styles.iconContainer}
                 />
-                <Text style={styles.resultText}>Draw</Text>
+                <Text style={styles.resultDrawText}>It's a draw!</Text>
                 {renderActionButtons()}
             </View>
         }
@@ -104,50 +106,61 @@ const styles = StyleSheet.create({
     container: {
         height: '100%'
     },
-    icon: {
-        backgroundColor: 'transparent'
+    iconContainer: {
+        
     },
     resultText: {
         fontSize: 60,
-        color: 'white'
+        color: '#333',
+        fontWeight: 'bold'
     },
-    drawResultContainer: {
+    resultDrawText: {
+        fontSize: 60,
+        color: '#f4511e',
+        fontWeight: 'bold',
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 10
+    },
+    resultWonText: {
+        fontSize: 60,
+        color: '#ffd700',
+        fontWeight: 'bold',
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 10
+    },
+    resultContainer: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
-        backgroundColor: 'rgba(40, 69, 167, .95)'
-    },
-    winResultContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        backgroundColor: 'rgba(40, 167, 69, .95)'
-    },
-    loserResultContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        backgroundColor: 'rgba(167, 40, 69, .95)'
+        backgroundColor: '#999'
     },
     actionContainer: {
-        display: 'flex',
-        width: '100%',
         paddingTop: 50,
         paddingLeft: 40,
         paddingRight: 40,
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        flexDirection: 'row'
     },
     buttonStyle: {
-        backgroundColor: '#fff',
-        fontSize: 40
+        backgroundColor: '#f4511e',
+        display: 'flex',
+        justifyContent: 'space-between'
+    },
+    buttonQuitStyle: {
+        backgroundColor: '#333',
+        display: 'flex',
+        justifyContent: 'space-between'
+    },
+    buttonContainerStyle: {
+        marginBottom: 20,
+        width: 150,
     },
     buttonTitleStyle: {
-        color: '#f4511e'
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingLeft: 10
     }
 })
  
