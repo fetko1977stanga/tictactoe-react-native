@@ -110,25 +110,28 @@ const styles = StyleSheet.create({
         
     },
     resultText: {
-        fontSize: 60,
+        fontSize: 30,
         color: '#333',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
     resultDrawText: {
-        fontSize: 60,
+        fontSize: 30,
         color: '#f4511e',
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: {width: -1, height: 1},
-        textShadowRadius: 10
+        textShadowRadius: 10,
+        textAlign: 'center'
     },
     resultWonText: {
-        fontSize: 60,
+        fontSize: 30,
         color: '#ffd700',
         fontWeight: 'bold',
         textShadowColor: 'rgba(0, 0, 0, 0.75)',
         textShadowOffset: {width: -1, height: 1},
-        textShadowRadius: 10
+        textShadowRadius: 10,
+        textAlign: 'center'
     },
     resultContainer: {
         display: 'flex',
