@@ -48,7 +48,10 @@ const GameBoard = () => {
     }
 
     const handleSelectCell = (gameCell: IBoardCell):void => {
-      const {id, value} = gameCell;
+        if(gameMoveInProgress) {
+           return;
+        }
+        const {id, value} = gameCell;
         if (value === null) {
             dispatch({ type: 'SELECT_CELL', payload: { id, value: playerSymbol } });
         }
