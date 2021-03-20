@@ -1,17 +1,33 @@
-import React from "react";
-import { StyleSheet, Text, TouchableHighlight, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, Animated, TouchableHighlight, View } from "react-native";
 import { Icon } from 'react-native-elements';
 import { useGameState } from "../store/context";
 
 const GameBoardCell = (props:any):JSX.Element => {
-    const { gameSymbol, playerSymbol } = useGameState();
-    const { gameCell, onPress, flashing } = props;
+    const { gameSymbol, gameEnded } = useGameState();
+    const { gameCell, onPress, flashing, isWinningCell } = props;
     const { value } = gameCell;
+    const winningCellBackgroundColor = new Animated.Value(0);
 
     const flashingCell = flashing ? styles.gameCellFlashing : null;
+    const winningCellStyle = isWinningCell ? styles.winningCell : null;
+
+    useEffect(() => {
+      if (gameEnded && isWinningCell) {
+        Animated.timing(
+          winningCellBackgroundColor,
+          {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: false
+          }
+        ).start();
+      }
+      
+    }, [gameEnded, winningCellBackgroundColor, isWinningCell])
 
     const renderCellValue = (value: string):JSX.Element | null => {
-        const iconColour = value === gameSymbol ? '#333' : '#f4511e';
+        const iconColour = isWinningCell ? '#fff' : value === gameSymbol ? '#333' : '#f4511e';
         const iconName = value === 'x' ? 'times' : 'circle';
         if (value === null) {
             return value;
@@ -21,8 +37,19 @@ const GameBoardCell = (props:any):JSX.Element => {
     }
 
     return (
-        <TouchableHighlight onPress={onPress} style={[styles.cell, flashingCell]} underlayColor="#cecece">
-            <View>{ renderCellValue(value) }</View>
+        <TouchableHighlight onPress={onPress} style={[styles.cell, flashingCell, winningCellStyle]} underlayColor="#cecece">
+            {
+              isWinningCell ? 
+              <Animated.View
+                style={{
+                  ...props.style,
+                  backgroundColor: winningCellBackgroundColor.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: ["#fff", "#f4511e"]
+                  }),
+                }}
+              >{ renderCellValue(value) }</Animated.View> : 
+              <View>{ renderCellValue(value) }</View>}
         </TouchableHighlight>
      );
 }
@@ -41,6 +68,9 @@ const styles = StyleSheet.create({
     },
     gameCellFlashing: {
       backgroundColor: '#cecece'
+    },
+    winningCell: {
+      backgroundColor: '#f4511e'
     },
     textStyle: {
         fontSize: 40,

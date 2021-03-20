@@ -18,9 +18,10 @@ const initialState: IState = {
         {id: 8, value: null},
         {id: 9, value: null}
     ],
+    difficulty: '',
     movesCounter: 0,
     gameEnded: false,
-    winner: null
+    outcome: null
 }
 
 const defaultAction: React.Dispatch<IAction> = () => {};
@@ -34,7 +35,9 @@ function gameReducer(state: IState, action: IAction) {
             const {playerSymbol, gameSymbol} = action.payload;
             return {...state, gameStarted: true, playerSymbol, gameSymbol, gameEnded: false};
         case 'FIRST_START':
-            return {...state, gameMoveInProgress: action.payload.gameMoveInProgress }
+            return {...state, gameMoveInProgress: action.payload.gameMoveInProgress };
+        case "SET_DIFFICULTY":
+            return { ...state, difficulty: action.payload.difficulty };
         case 'RESET_GAME':
             return initialState;
         case 'SELECT_CELL':
@@ -45,10 +48,10 @@ function gameReducer(state: IState, action: IAction) {
                 return cell.id === action.payload.id ? {...cell, id: action.payload.id, value: action.payload.value} : cell; 
             });
 
-            const winner = checkForWinner({...state, gameBoard: updatedGameBoard });
+            const outcome = checkForWinner(updatedGameBoard);
             
-            if (winner !== null || movesCounter === 9) {
-                return {...state, winner, gameBoard: updatedGameBoard, movesCounter, gameMoveInProgress: false, gameEnded: true};
+            if (outcome !== null) {
+                return {...state, outcome, gameBoard: updatedGameBoard, movesCounter, gameMoveInProgress: false, gameEnded: true};
             }
 
             return {...state, gameMoveInProgress, movesCounter, gameBoard: updatedGameBoard};

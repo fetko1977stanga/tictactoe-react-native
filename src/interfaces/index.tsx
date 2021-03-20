@@ -9,12 +9,18 @@ export interface IState {
     gameSymbol: string;
     gameMoveInProgress: boolean;
     gameBoard: Array<IBoardCell>;
+    difficulty: string;
     gameEnded: boolean;
     movesCounter: number;
-    winner: null | string;
+    outcome: null | IGameOutcome;
 }
 
 export interface IAction {
     type: string;
     payload?: any
+}
+
+export interface IGameOutcome {
+    result: string;
+    winningIds: number[];
 }

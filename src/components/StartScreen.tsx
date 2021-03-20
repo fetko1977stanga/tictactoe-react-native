@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useGameDispatch, useGameState } from '../store/context';
 import { useNavigation  } from '@react-navigation/native';
-import { Button, Icon, Divider  } from 'react-native-elements';
+import { Button, Icon, Divider, CheckBox  } from 'react-native-elements';
 import Overlay from './shared/Overlay';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
@@ -10,15 +10,10 @@ export default function StartScreen() {
     const dispatch = useGameDispatch();
     const navigation = useNavigation();
     const [checkedSymbol, setCheckedSymbol] = useState('');
-    const [noSymbolCheckedError, setNoSymbolCheckedError] = useState(false);
     const [orderDrawStarted, setOrderDrawStarted] = useState(false);
-    const { gameMoveInProgress } = useGameState();
+    const { gameMoveInProgress, difficulty } = useGameState();
 
     const handleGameStart = ():void => {
-        if (!checkedSymbol) {
-            return setNoSymbolCheckedError(true);
-        }
-
         let gameSymbol = checkedSymbol === 'o' ? 'x' : 'o';
 
         dispatch({type: 'GAME_START', payload: { playerSymbol: checkedSymbol, gameSymbol }});
@@ -30,8 +25,8 @@ export default function StartScreen() {
         setOrderDrawStarted(true);
         const drawNumber = Math.floor(Math.random() * Math.floor(100));
         let gameMoveInProgress = drawNumber % 2 == 0 ? true : false;
+        dispatch({type: 'FIRST_START', payload: { gameMoveInProgress }});
         setTimeout(() => {
-            dispatch({type: 'FIRST_START', payload: { gameMoveInProgress }});
             setOrderDrawStarted(false);
         }, 2000);
     }
@@ -40,21 +35,69 @@ export default function StartScreen() {
         if (checkedSymbol) {
             return;
         }
-        setNoSymbolCheckedError(false);
         setCheckedSymbol(symbol);
         drawOrderHandler();
     }
 
+    const renderSelectDifficultyLevel = ():JSX.Element => {
+        return <View>
+                <Text style={styles.difficultySelectContainerCopy}>Select difficulty:</Text>
+                    <View style={styles.difficultySelectContainerCheckboxes}>
+                        <CheckBox
+                            center
+                            iconRight
+                            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent'}}
+                            title='Easy'
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={difficulty === 'easy'}
+                            onPress={() => dispatch({type: 'SET_DIFFICULTY', payload: { difficulty: 'easy' }})}
+                            checkedColor='#333'
+                            uncheckedColor='#333'
+                            textStyle={styles.checkboxText}
+                        />
+                        <CheckBox
+                            center
+                            title='Hard'
+                            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent'}}
+                            checkedIcon='dot-circle-o'
+                            uncheckedIcon='circle-o'
+                            checked={difficulty === 'hard'}
+                            onPress={() => dispatch({type: 'SET_DIFFICULTY', payload: { difficulty: 'hard' }})}
+                            checkedColor='#333'
+                            uncheckedColor='#333'
+                            textStyle={styles.checkboxText}
+                        />
+                    </View>
+                </View>
+        
+        
+    }
+
     const renderStartButton = ():JSX.Element => {
-        return <Button
-                    icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
-                    raised
-                    iconRight
-                    title=''
-                    onPress={handleGameStart}
-                    containerStyle={styles.buttonContainerStyle}
-                    buttonStyle={styles.buttonStyle}
-                />
+        return <View style={{ display: 'flex', alignItems: 'center'}}>
+                    <Button
+                        icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
+                        raised
+                        iconRight
+                        title=''
+                        onPress={handleGameStart}
+                        containerStyle={styles.buttonContainerStyle}
+                        buttonStyle={styles.buttonStyle}
+                    />
+                </View>
+    }
+
+    const renderOrderMessages = (gameMoveInProgress: boolean):JSX.Element => {
+        return gameMoveInProgress ? 
+        <View style={styles.orderMessageContainer}>
+            <Text style={styles.orderMessageText}>You'll start second!</Text>
+            { renderSelectDifficultyLevel() }
+        </View> : 
+        <View style={styles.orderMessageContainer}>
+            <Text style={styles.orderMessageText}>You'll start first!</Text>
+            { renderSelectDifficultyLevel() }
+        </View>
     }
 
     return (
@@ -73,16 +116,11 @@ export default function StartScreen() {
                     </View>
                     {
                         checkedSymbol ? (
-                            gameMoveInProgress ? 
-                                <View style={styles.orderMessageContainer}>
-                                    <Text style={styles.orderMessageText}>You'll start second!</Text>
-                                    { renderStartButton() }
-                                </View> : 
-                                <View style={styles.orderMessageContainer}>
-                                    <Text style={styles.orderMessageText}>You'll start first!</Text>
-                                    { renderStartButton() }
-                                </View>   
+                            renderOrderMessages(gameMoveInProgress)  
                         ) : null
+                    }
+                    {
+                        difficulty && checkedSymbol ? renderStartButton() : null
                     }
                 </View>
                 {
@@ -168,11 +206,22 @@ const styles = StyleSheet.create({
     },
     orderMessageText: {
         textAlign: 'center',
-        color: '#f4511e',
-        textShadowColor: 'rgba(0,0,0, .75)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 5,
+        color: '#333',
         fontWeight: 'bold',
         fontSize: 20
+    },
+    difficultySelectContainerCopy: {
+        textAlign: 'center',
+        color: '#333',
+        fontWeight: 'bold',
+        fontSize: 18
+    },
+    difficultySelectContainerCheckboxes: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    checkboxText: {
+        color: '#333',
+        fontSize: 18,
     }
 })
