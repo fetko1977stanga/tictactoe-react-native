@@ -10,9 +10,8 @@ export default function StartScreen() {
     const dispatch = useGameDispatch();
     const navigation = useNavigation();
     const [checkedSymbol, setCheckedSymbol] = useState('');
-    const [difficulty, setDifficulty] = useState('');
     const [orderDrawStarted, setOrderDrawStarted] = useState(false);
-    const { gameMoveInProgress } = useGameState();
+    const { gameMoveInProgress, difficulty } = useGameState();
 
     const handleGameStart = ():void => {
         let gameSymbol = checkedSymbol === 'o' ? 'x' : 'o';
@@ -26,8 +25,8 @@ export default function StartScreen() {
         setOrderDrawStarted(true);
         const drawNumber = Math.floor(Math.random() * Math.floor(100));
         let gameMoveInProgress = drawNumber % 2 == 0 ? true : false;
+        dispatch({type: 'FIRST_START', payload: { gameMoveInProgress }});
         setTimeout(() => {
-            dispatch({type: 'FIRST_START', payload: { gameMoveInProgress }});
             setOrderDrawStarted(false);
         }, 2000);
     }
@@ -52,7 +51,7 @@ export default function StartScreen() {
                             checkedIcon='dot-circle-o'
                             uncheckedIcon='circle-o'
                             checked={difficulty === 'easy'}
-                            onPress={() => setDifficulty('easy')}
+                            onPress={() => dispatch({type: 'SET_DIFFICULTY', payload: { difficulty: 'easy' }})}
                             checkedColor='#333'
                             uncheckedColor='#333'
                             textStyle={styles.checkboxText}
@@ -64,7 +63,7 @@ export default function StartScreen() {
                             checkedIcon='dot-circle-o'
                             uncheckedIcon='circle-o'
                             checked={difficulty === 'hard'}
-                            onPress={() => setDifficulty('hard')}
+                            onPress={() => dispatch({type: 'SET_DIFFICULTY', payload: { difficulty: 'hard' }})}
                             checkedColor='#333'
                             uncheckedColor='#333'
                             textStyle={styles.checkboxText}
@@ -76,15 +75,17 @@ export default function StartScreen() {
     }
 
     const renderStartButton = ():JSX.Element => {
-        return <Button
-                    icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
-                    raised
-                    iconRight
-                    title=''
-                    onPress={handleGameStart}
-                    containerStyle={styles.buttonContainerStyle}
-                    buttonStyle={styles.buttonStyle}
-                />
+        return <View style={{ display: 'flex', alignItems: 'center'}}>
+                    <Button
+                        icon={{name: 'play-circle', type: 'font-awesome', size: 100, color: 'white'}}
+                        raised
+                        iconRight
+                        title=''
+                        onPress={handleGameStart}
+                        containerStyle={styles.buttonContainerStyle}
+                        buttonStyle={styles.buttonStyle}
+                    />
+                </View>
     }
 
     const renderOrderMessages = (gameMoveInProgress: boolean):JSX.Element => {
@@ -115,8 +116,11 @@ export default function StartScreen() {
                     </View>
                     {
                         checkedSymbol ? (
-                            renderOrderMessages(gameMoveInProgress)   
+                            renderOrderMessages(gameMoveInProgress)  
                         ) : null
+                    }
+                    {
+                        difficulty && checkedSymbol ? renderStartButton() : null
                     }
                 </View>
                 {

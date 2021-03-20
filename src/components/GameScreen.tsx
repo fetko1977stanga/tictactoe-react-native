@@ -1,13 +1,13 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, View } from 'react-native';
+import { BackHandler, StyleSheet, View } from 'react-native';
 import GameBoard from './GameBoard';
-import GameMove from './GameMove';
 import { Button } from 'react-native-elements';
-import { useGameDispatch } from '../store/context';
+import { useGameDispatch, useGameState } from '../store/context';
 
 export default function GameScreen () {
     const navigation = useNavigation();
+    const { gameEnded } = useGameState();
     const dispatch = useGameDispatch();
 
     useEffect(() => navigation.addListener('beforeRemove', (e) => {
@@ -20,6 +20,46 @@ export default function GameScreen () {
         }
     }));
 
+    const exitApplication = ():void => {
+        BackHandler.exitApp();
+    }
+
+    const renderActionButtons = ():JSX.Element => {
+        return <View style={styles.actionContainer}>
+            <Button
+                icon={{name: 'play-circle', type: 'font-awesome-5', size: 30.5, color: 'white'}}
+                raised
+                iconRight
+                title='Restart'
+                onPress={() => navigation.navigate('Start')}
+                buttonStyle={styles.buttonStyle}
+                containerStyle={styles.buttonContainerStyle}
+                titleStyle={styles.buttonTitleStyle}
+            />
+            <Button
+                icon={{name: 'times', type: 'font-awesome-5', size: 30, color: 'white'}}
+                raised
+                iconRight
+                title='Quit'
+                onPress={() => exitApplication()}
+                buttonStyle={styles.buttonQuitStyle}
+                containerStyle={styles.buttonContainerStyle}
+                titleStyle={styles.buttonTitleStyle}
+            />
+        </View>
+    }
+
+    const renderResetButton = ():JSX.Element => {
+        return <View style={styles.actionContainer}>
+            <Button
+                onPress={handleResetGame}
+                title='Reset Game'
+                buttonStyle={styles.resetGameButton}
+                containerStyle={styles.resetGameButtonContainerStyle}
+            />
+        </View>
+    }
+
 
     const handleResetGame = () => {
         navigation.navigate('Start');
@@ -29,7 +69,10 @@ export default function GameScreen () {
         <Fragment>
             <View style={styles.container}>
                 <GameBoard />
-                <Button onPress={handleResetGame} title='Reset Game' buttonStyle={styles.resetGameButton} />
+                {
+                    gameEnded ? renderActionButtons() : renderResetButton()
+                }
+                
             </View>
         </Fragment>
     )
@@ -41,13 +84,46 @@ const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        backgroundColor: '#bebebe'
+        backgroundColor: '#777'
     },
     resetGameButton: {
         backgroundColor: '#333',
         color: 'white',
         borderRadius: 0,
-        paddingTop: 10,
-        paddingBottom: 10
+        paddingTop: 20,
+        paddingBottom: 20
+    },
+    resetGameButtonContainerStyle: {
+        width: '100%'
+    },
+    actionContainer: {
+        display: 'flex',
+        flexDirection: 'row'
+    },
+    buttonStyle: {
+        backgroundColor: '#f4511e',
+        display: 'flex',
+        justifyContent: 'space-between',
+        borderRadius: 0,
+        paddingTop: 20,
+        paddingBottom: 20
+    },
+    buttonQuitStyle: {
+        backgroundColor: '#333',
+        display: 'flex',
+        justifyContent: 'space-between',
+        borderRadius: 0,
+        paddingTop: 20,
+        paddingBottom: 20
+    },
+    buttonContainerStyle: {
+        width: '50%',
+        borderRadius: 0,
+    },
+    buttonTitleStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 20,
+        paddingLeft: 10
     }
 });
